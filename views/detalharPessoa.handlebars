@@ -3,17 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Detalhes da Pessoa</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
-    <header>
-    <h2>Detalhes da Pessoa</h2>
-    </header>
-    <p><strong>ID:</strong> {{pessoa.id}}</p>
-    <p><strong>Nome:</strong> {{pessoa.pessoa}}</p>
-    <p><strong>Idade:</strong> {{pessoa.idade}}</p>
 
-    <a class="btn" href="/pessoas">Voltar</a>
+<body>
+
+<header>
+    <h2>Detalhes da Pessoa</h2>
+</header>
+
+<main>
+    <div class="card">
+
+        <p><strong>ID:</strong> {{pessoa.id}}</p>
+        <p><strong>Nome:</strong> {{pessoa.pessoa}}</p>
+        <p><strong>Idade:</strong> {{pessoa.idade}}</p>
+        <p><strong>Senha:</strong> {{pessoa.senha}}</p>
+
+        <a class="btn" href="/pessoas">Voltar</a>
+
+    </div>
+</main>
+
 </body>
 </html>

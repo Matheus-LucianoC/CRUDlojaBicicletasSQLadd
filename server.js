@@ -1,265 +1,238 @@
-const express = require("express");
-const exphbs = require("express-handlebars");
-const path = require("path");
+// server.js (trecho principal - adapte conforme sua estrutura)
+const express = require('express');
+const exphbs = require('express-handlebars');
+const path = require('path');
+const bodyParser = require('body-parser'); // opcional
+const sequelize = require('./database'); // nosso arquivo
+const Pessoa = require('./models/pessoa');
+const Produto = require('./models/Produto');
+const Servico = require('./models/Servico');
 
 const app = express();
 const port = 3000;
 
-// Database
-const sequelize = require("./database");
-
-// Models
-const Pessoa = require("./models/pessoas.model");
-const Produto = require("./models/produtos.model");
-const Servico = require("./models/servicos.model");
-
-// Middlewares
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-app.engine("handlebars", exphbs.engine({ defaultLayout: false }));
-app.set("view engine", "handlebars");
-app.set("views", path.join(__dirname, "views"));
 
-// Sincronizar o banco antes de iniciar o servidor
-sequelize.sync()
-  .then(() => {
-    console.log("Banco sincronizado!");
-    app.listen(port, () => console.log(`Servidor rodando em http://localhost:${port}`));
-  })
-  .catch(err => console.error("Erro ao sincronizar o banco:", err));
 
-// ===========================================
-// ROTAS PRINCIPAIS
-// ===========================================
 
-app.get("/", (req, res) => {
-  res.render("lobby");
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.set('views', path.join(__dirname, 'views'));
+app.engine('handlebars', exphbs.engine({ defaultLayout: false }));
+app.set('view engine', 'handlebars');
+
+/* ----------------------
+   Rotas PESSOAS (exemplos)
+   ---------------------- */
+
+app.get('/', (req, res) => res.render('lobby'));
+
+app.get('/homePessoas', (req, res) => {
+    res.render('homePessoas');
 });
 
-// ===========================================
-// ROTAS PESSOAS
-// ===========================================
 
-app.get("/homePessoas", (req, res) => res.render("homePessoas"));
-
-app.get("/pessoas", async (req, res) => {
-  try {
-    const pessoas = await Pessoa.findAll();
-    res.render("listarPessoas", { pessoas });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar pessoas");
-  }
+app.get('/pessoas', async (req, res) => {
+  const pessoas = await Pessoa.findAll({
+    order: [['id', 'ASC']],
+    raw: true
+});
+  res.render('listarPessoas', { pessoas });
 });
 
-app.get("/pessoas/nova", (req, res) => res.render("cadastrarPessoa"));
 
-app.post("/pessoas", async (req, res) => {
-  try {
-    const { nome, senha, idade } = req.body;
-    await Pessoa.create({ nome, senha, idade });
-    res.redirect("/pessoas");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao criar pessoa");
-  }
+app.get('/pessoas/nova', (req, res) => res.render('cadastrarPessoa'));
+
+
+app.post('/pessoas', async (req, res) => {
+  const { pessoa, senha, idade } = req.body;
+  await Pessoa.create({ pessoa, senha, idade });
+  res.redirect('/pessoas'); // redirect evita reenvio de formulário
 });
 
-app.get("/pessoas/ver/:id", async (req, res) => {
-  try {
-    const pessoa = await Pessoa.findByPk(req.params.id);
-    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
-    res.render("detalharPessoa", { pessoa });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar pessoa");
-  }
+
+app.get('/pessoas/ver/:id', async (req, res) => {
+  const pessoa = await Pessoa.findByPk(req.params.id, { raw: true });
+  if (!pessoa) return res.status(404).send('Pessoa não encontrada');
+  res.render('detalharPessoa', { pessoa });
 });
 
-app.get("/pessoas/:id/editar", async (req, res) => {
-  try {
-    const pessoa = await Pessoa.findByPk(req.params.id);
-    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
-    res.render("editarPessoa", { pessoa });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar pessoa");
-  }
+
+app.get('/pessoas/:id/editar', async (req, res) => {
+  const pessoa = await Pessoa.findByPk(req.params.id, { raw: true });
+
+  if (!pessoa) return res.status(404).send('Pessoa não encontrada');
+
+  res.render('editarPessoa', { pessoa });
 });
 
-app.post("/pessoas/:id/editar", async (req, res) => {
-  try {
-    const pessoa = await Pessoa.findByPk(req.params.id);
-    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
-    const { nome, senha, idade } = req.body;
-    await pessoa.update({ nome, senha, idade });
-    res.redirect("/pessoas");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao atualizar pessoa");
-  }
+
+app.post('/pessoas/:id/editar', async (req, res) => {
+  const pessoa = await Pessoa.findByPk(req.params.id);
+  if (!pessoa) return res.status(404).send('Pessoa não encontrada');
+
+  pessoa.pessoa = req.body.pessoa;
+  pessoa.senha = req.body.senha;
+  pessoa.idade = req.body.idade;
+
+  await pessoa.save();
+  res.redirect('/pessoas');
 });
 
-app.post("/pessoas/excluir/:id", async (req, res) => {
-  try {
-    const pessoa = await Pessoa.findByPk(req.params.id);
-    if (!pessoa) return res.status(404).send("Pessoa não encontrada");
-    await pessoa.destroy();
-    res.redirect("/pessoas");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao excluir pessoa");
-  }
+
+app.post('/pessoas/excluir/:id', async (req, res) => {
+  const pessoa = await Pessoa.findByPk(req.params.id);
+  if (!pessoa) return res.status(404).send('Pessoa não encontrada');
+  await pessoa.destroy();
+  res.redirect('/pessoas');
 });
 
-// ===========================================
-// ROTAS PRODUTOS (Bicicletas)
-// ===========================================
+/* ----------------------
+   Rotas PRODUTOS/BICICLETAS
+   ---------------------- */
 
-app.get("/homeBicicletas", (req, res) => res.render("homeBike"));
-
-app.get("/bicicletas", async (req, res) => {
-  try {
-    const produtos = await Produto.findAll();
-    res.render("listarBike", { produtos });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar produtos");
-  }
+// página inicial das bikes
+app.get('/homeBicicletas', (req, res) => {
+    res.render('homeBike');
 });
 
-app.get("/bicicletas/nova", (req, res) => res.render("cadastrarBike"));
-
-app.post("/bicicletas", async (req, res) => {
-  try {
-    const { nome, descricao, preco, cor } = req.body;
-    await Produto.create({ nome, descricao, preco, cor });
-    res.redirect("/bicicletas");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao criar produto");
-  }
+// listar bicicletas
+app.get('/bicicletas', async (req, res) => {
+    const produtos = await Produto.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarBike', { produtos });
 });
 
-app.get("/bicicletas/ver/:id", async (req, res) => {
-  try {
+// formulário nova bicicleta
+app.get('/bicicletas/nova', (req, res) => res.render('cadastrarBike'));
+
+// criar bicicleta
+app.post('/bicicletas', async (req, res) => {
+    const { nome, preco, cor } = req.body;
+    await Produto.create({ nome, preco, cor });
+    res.redirect('/bicicletas');
+});
+
+// ver detalhes
+app.get('/bicicletas/ver/:id', async (req, res) => {
+    const produto = await Produto.findByPk(req.params.id, { raw: true });
+    if (!produto) return res.status(404).send('Bicicleta não encontrada');
+    res.render('detalharBike', { produto });
+});
+
+// editar - formulário
+app.get('/bicicletas/:id/editar', async (req, res) => {
+    const produto = await Produto.findByPk(req.params.id, { raw: true });
+    if (!produto) return res.status(404).send('Bicicleta não encontrada');
+    res.render('editarBike', { produto });
+});
+
+// salvar edição
+app.post('/bicicletas/:id/editar', async (req, res) => {
     const produto = await Produto.findByPk(req.params.id);
-    if (!produto) return res.status(404).send("Bicicleta não encontrada");
-    res.render("detalharBike", { produto });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar produto");
-  }
+    if (!produto) return res.status(404).send('Bicicleta não encontrada');
+
+    produto.nome = req.body.nome;
+    produto.preco = req.body.preco;
+    produto.cor = req.body.cor;
+
+    await produto.save();
+    res.redirect('/bicicletas');
 });
 
-app.get("/bicicletas/:id/editar", async (req, res) => {
-  try {
+// excluir
+app.post('/bicicletas/excluir/:id', async (req, res) => {
     const produto = await Produto.findByPk(req.params.id);
-    if (!produto) return res.status(404).send("Bicicleta não encontrada");
-    res.render("editarBike", { produto });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar produto");
-  }
-});
+    if (!produto) return res.status(404).send('Bicicleta não encontrada');
 
-app.post("/bicicletas/:id/editar", async (req, res) => {
-  try {
-    const produto = await Produto.findByPk(req.params.id);
-    if (!produto) return res.status(404).send("Bicicleta não encontrada");
-    const { nome, descricao, preco, cor } = req.body;
-    await produto.update({ nome, descricao, preco, cor });
-    res.redirect("/bicicletas");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao atualizar produto");
-  }
-});
-
-app.post("/bicicletas/excluir/:id", async (req, res) => {
-  try {
-    const produto = await Produto.findByPk(req.params.id);
-    if (!produto) return res.status(404).send("Bicicleta não encontrada");
     await produto.destroy();
-    res.redirect("/bicicletas");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao excluir produto");
-  }
+    res.redirect('/bicicletas');
 });
 
-// ===========================================
-// ROTAS SERVIÇOS
-// ===========================================
 
-app.get("/homeServicos", (req, res) => res.render("homeServicos"));
+/* ----------------------
+   Rotas SERVIÇOS
+   ---------------------- */
 
-app.get("/servicos", async (req, res) => {
-  try {
-    const servicos = await Servico.findAll();
-    res.render("listarServicos", { servicos });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar serviços");
-  }
+// página inicial dos serviços
+app.get('/homeServicos', (req, res) => {
+    res.render('homeServicos');
 });
 
-app.get("/servicos/novo", (req, res) => res.render("cadastrarServico"));
+// listar serviços
+app.get('/servicos', async (req, res) => {
+    const servicos = await Servico.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarServicos', { servicos });
+});
 
-app.post("/servicos", async (req, res) => {
-  try {
+// formulário novo serviço
+app.get('/servicos/novo', (req, res) => res.render('cadastrarServico'));
+
+// criar serviço
+app.post('/servicos', async (req, res) => {
     const { nome, descricao, preco } = req.body;
     await Servico.create({ nome, descricao, preco });
-    res.redirect("/servicos");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao criar serviço");
-  }
+    res.redirect('/servicos');
 });
 
-app.get("/servicos/ver/:id", async (req, res) => {
-  try {
-    const servico = await Servico.findByPk(req.params.id);
-    if (!servico) return res.status(404).send("Serviço não encontrado");
-    res.render("detalharServico", { servico });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar serviço");
-  }
+// ver detalhes
+app.get('/servicos/ver/:id', async (req, res) => {
+    const servico = await Servico.findByPk(req.params.id, { raw: true });
+    if (!servico) return res.status(404).send('Serviço não encontrado');
+    res.render('detalharServico', { servico });
 });
 
-app.get("/servicos/:id/editar", async (req, res) => {
-  try {
-    const servico = await Servico.findByPk(req.params.id);
-    if (!servico) return res.status(404).send("Serviço não encontrado");
-    res.render("editarServico", { servico });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao buscar serviço");
-  }
+// editar form
+app.get('/servicos/:id/editar', async (req, res) => {
+    const servico = await Servico.findByPk(req.params.id, { raw: true });
+    if (!servico) return res.status(404).send('Serviço não encontrado');
+    res.render('editarServico', { servico });
 });
 
-app.post("/servicos/:id/editar", async (req, res) => {
-  try {
+// salvar edição
+app.post('/servicos/:id/editar', async (req, res) => {
     const servico = await Servico.findByPk(req.params.id);
-    if (!servico) return res.status(404).send("Serviço não encontrado");
-    const { nome, descricao, preco } = req.body;
-    await servico.update({ nome, descricao, preco });
-    res.redirect("/servicos");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao atualizar serviço");
-  }
+    if (!servico) return res.status(404).send('Serviço não encontrado');
+
+    servico.nome = req.body.nome;
+    servico.descricao = req.body.descricao;
+    servico.preco = req.body.preco;
+
+    await servico.save();
+    res.redirect('/servicos');
 });
 
-app.post("/servicos/excluir/:id", async (req, res) => {
-  try {
+// excluir
+app.post('/servicos/excluir/:id', async (req, res) => {
     const servico = await Servico.findByPk(req.params.id);
-    if (!servico) return res.status(404).send("Serviço não encontrado");
+    if (!servico) return res.status(404).send('Serviço não encontrado');
+
     await servico.destroy();
-    res.redirect("/servicos");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Erro ao excluir serviço");
-  }
+    res.redirect('/servicos');
 });
+
+
+/* ----------------------
+   Inicializar DB e servidor
+   ---------------------- */
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    // sincroniza modelos com o DB (cria tabelas se não existirem)
+    await sequelize.sync(); 
+    console.log('Banco sincronizado');
+
+    app.listen(port, () => {
+      console.log(`Servidor em execução: http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.error('Erro ao iniciar o banco/servidor', err);
+  }
+})();

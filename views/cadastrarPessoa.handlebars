@@ -3,24 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cadastrar Pessoa</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
     <header>
-    <h2>Cadastrar Pessoa</h2>
+        <h2>Cadastrar Pessoa</h2>
     </header>
-    <main>
-    <div class="card">
-    <form action="/pessoas" method="POST">
-    <input type="text" name="pessoa" placeholder="Nome da pessoa" required>
-    <input type="text" name="senha" placeholder="senha do usuário" required>
-    <input type="number" name="idade" placeholder="idade do usuário" required>
-    <button type="submit">Salvar</button>
-    </form>
 
-    <a class="btn" href="/homePessoas">Voltar</a>
-    </div>
+    <main>
+        <div class="card">
+
+            <form action="/pessoas" method="POST">
+
+                <h3>Nome</h3>
+                <input type="text" name="pessoa" placeholder="Nome da pessoa" required>
+
+                <h3>Senha</h3>
+                <input type="text" name="senha" placeholder="Senha do usuário" required>
+
+                <h3>Idade</h3>
+                <input type="number" name="idade" placeholder="Idade do usuário" required>
+
+                <button type="submit">Salvar</button>
+            </form>
+
+            <a class="btn" href="/homePessoas">Voltar</a>
+
+        </div>
     </main>
+
 </body>
 </html>
