@@ -11,6 +11,10 @@ const Produto = sequelize.define('Produto', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  descricao: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
   preco: {
     type: DataTypes.STRING,
     allowNull: true,
@@ -18,7 +22,7 @@ const Produto = sequelize.define('Produto', {
   cor: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
+  }
 }, {
   tableName: 'produtos',
   timestamps: false,

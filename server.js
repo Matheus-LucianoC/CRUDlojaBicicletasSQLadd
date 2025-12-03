@@ -111,8 +111,8 @@ app.get('/bicicletas/nova', (req, res) => res.render('cadastrarBike'));
 
 // criar bicicleta
 app.post('/bicicletas', async (req, res) => {
-    const { nome, preco, cor } = req.body;
-    await Produto.create({ nome, preco, cor });
+    const { nome, preco, cor, descricao } = req.body;
+    await Produto.create({ nome, preco, cor, descricao });
     res.redirect('/bicicletas');
 });
 
@@ -138,6 +138,7 @@ app.post('/bicicletas/:id/editar', async (req, res) => {
     produto.nome = req.body.nome;
     produto.preco = req.body.preco;
     produto.cor = req.body.cor;
+    produto.descricao = req.body.descricao;
 
     await produto.save();
     res.redirect('/bicicletas');
