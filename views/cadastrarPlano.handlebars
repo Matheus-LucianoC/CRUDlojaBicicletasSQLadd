@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+    <h2>Cadastrar Aula</h2>
+    </header>
+    <main>
+    <div class="card">
+    <form action="/planos" method="POST">
+    <input type="text" name="nome" placeholder="Nome do Plano" required>
+    <input type="text" name="beneficios" placeholder="Benefícios do plano" required>
+    <input type="number" name="preco" placeholder="preço mensal do plano" required>
+    <input type="number" name="horas_limite" placeholder="Horas diárias de uso" required>
+    <button type="submit">Salvar</button>
+    </form>
+
+    <a class="btn" href="/homePlano">Voltar</a>
+    </div>
+    </main>
+</body>
+</html>

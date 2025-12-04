@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
-const Servico = sequelize.define('Servico', {
+const Plano = sequelize.define('Plano', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,7 +11,7 @@ const Servico = sequelize.define('Servico', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  descricao: {
+  beneficios: {
     type: DataTypes.STRING,
     allowNull: true,
   },
@@ -19,9 +19,13 @@ const Servico = sequelize.define('Servico', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  horas_limite: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  }
 }, {
-  tableName: 'servicos',
+  tableName: 'planos',
   timestamps: false,
 });
 
-module.exports = Servico;
+module.exports = Plano;

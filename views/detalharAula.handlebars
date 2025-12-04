@@ -8,12 +8,23 @@
 </head>
 <body>
     <header>
-    <h2>Detalhes do serviço</h2>
+    <h2>Detalhes da aula</h2>
     </header>
-    <p><strong>Nome:</strong> {{servico.nome}}</p>
-    <p><strong>descrição:</strong> {{servico.descricao}}</p>
-    <p><strong>preço:</strong> {{servico.preco}}</p>
+    
+<main>
+    <div class="card">
 
-    <a class="btn" href="/servicos">Voltar</a>
+        <p><strong>Nome:</strong> {{aula.nome}}</p>
+        <p><strong>descrição:</strong> {{aula.descricao}}</p>
+        <p><strong>preço:</strong> {{aula.preco}}</p>
+        <p><strong>faixa etaria:</strong> {{aula.faixa_etaria}}</p>
+        <p><strong>horas semanais:</strong> {{aula.horas_semanais}}</p>
+
+        <a class="btn" href="/aulas">Voltar</a>
+
+    </div>
+</main>
+
 </body>
 </html>
+

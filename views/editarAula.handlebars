@@ -8,20 +8,24 @@
 </head>
 <body>
     <header>
-    <h2>Editar Serviço</h2>
+    <h2>Editar Aula</h2>
     </header>
     <main>
     <div class="card"> 
-    <form action="/servicos/{{servico.id}}/editar" method="post">
+    <form action="/aulas/{{aula.id}}/editar" method="post">
         <h3> nome </h3>
-        <input type="text" name="nome" value="{{servico.nome}}" required>
+        <input type="text" name="nome" value="{{aula.nome}}" required>
         <h3> descrição </h3>
-        <input type="text" name="descricao" value="{{servico.descricao}}" required>
+        <input type="text" name="descricao" value="{{aula.descricao}}" required>
         <h3> preço </h3>
-        <input type="text" name="preco" value="{{servico.preco}}" required>
+        <input type="number" name="preco" value="{{aula.preco}}" required>
+        <h3> faixa_etaria </h3>
+        <input type="number" name="faixa_etaria" value="{{aula.faixa_etaria}}" required>
+        <h3> horas_semanais </h3>
+        <input type="number" name="horas_semanais" value="{{aula.horas_semanais}}" required>
         <button type="submit">Salvar</button>
     </form>
-    <a class="btn" href="/servicos">Voltar</a>
+    <a class="btn" href="/aulas">Voltar</a>
     </div>
     </main>
 </body>

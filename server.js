@@ -8,6 +8,8 @@ const Pessoa = require('./models/pessoa');
 const Produto = require('./models/Produto');
 const Servico = require('./models/Servico');
 const Evento = require('./models/Evento');
+const Aula = require('./models/Aula');
+const Plano = require('./models/Plano');
 
 const app = express();
 const port = 3000;
@@ -93,12 +95,12 @@ app.post('/pessoas/excluir/:id', async (req, res) => {
    Rotas PRODUTOS/BICICLETAS
    ---------------------- */
 
-// página inicial das bikes
+
 app.get('/homeBicicletas', (req, res) => {
     res.render('homeBike');
 });
 
-// listar bicicletas
+
 app.get('/bicicletas', async (req, res) => {
     const produtos = await Produto.findAll({
         order: [['id', 'ASC']],
@@ -107,31 +109,31 @@ app.get('/bicicletas', async (req, res) => {
     res.render('listarBike', { produtos });
 });
 
-// formulário nova bicicleta
+
 app.get('/bicicletas/nova', (req, res) => res.render('cadastrarBike'));
 
-// criar bicicleta
+
 app.post('/bicicletas', async (req, res) => {
     const { nome, descricao, preco, cor,  } = req.body;
     await Produto.create({ nome, preco, cor, descricao });
     res.redirect('/bicicletas');
 });
 
-// ver detalhes
+
 app.get('/bicicletas/ver/:id', async (req, res) => {
     const produto = await Produto.findByPk(req.params.id, { raw: true });
     if (!produto) return res.status(404).send('Bicicleta não encontrada');
     res.render('detalharBike', { produto });
 });
 
-// editar - formulário
+
 app.get('/bicicletas/:id/editar', async (req, res) => {
     const produto = await Produto.findByPk(req.params.id, { raw: true });
     if (!produto) return res.status(404).send('Bicicleta não encontrada');
     res.render('editarBike', { produto });
 });
 
-// salvar edição
+
 app.post('/bicicletas/:id/editar', async (req, res) => {
     const produto = await Produto.findByPk(req.params.id);
     if (!produto) return res.status(404).send('Bicicleta não encontrada');
@@ -145,7 +147,7 @@ app.post('/bicicletas/:id/editar', async (req, res) => {
     res.redirect('/bicicletas');
 });
 
-// excluir
+
 app.post('/bicicletas/excluir/:id', async (req, res) => {
     const produto = await Produto.findByPk(req.params.id);
     if (!produto) return res.status(404).send('Bicicleta não encontrada');
@@ -159,12 +161,12 @@ app.post('/bicicletas/excluir/:id', async (req, res) => {
    Rotas SERVIÇOS
    ---------------------- */
 
-// página inicial dos serviços
+
 app.get('/homeServicos', (req, res) => {
     res.render('homeServicos');
 });
 
-// listar serviços
+
 app.get('/servicos', async (req, res) => {
     const servicos = await Servico.findAll({
         order: [['id', 'ASC']],
@@ -173,31 +175,31 @@ app.get('/servicos', async (req, res) => {
     res.render('listarServicos', { servicos });
 });
 
-// formulário novo serviço
+
 app.get('/servicos/novo', (req, res) => res.render('cadastrarServico'));
 
-// criar serviço
+
 app.post('/servicos', async (req, res) => {
     const { nome, descricao, preco } = req.body;
     await Servico.create({ nome, descricao, preco });
     res.redirect('/servicos');
 });
 
-// ver detalhes
+
 app.get('/servicos/ver/:id', async (req, res) => {
     const servico = await Servico.findByPk(req.params.id, { raw: true });
     if (!servico) return res.status(404).send('Serviço não encontrado');
     res.render('detalharServico', { servico });
 });
 
-// editar form
+
 app.get('/servicos/:id/editar', async (req, res) => {
     const servico = await Servico.findByPk(req.params.id, { raw: true });
     if (!servico) return res.status(404).send('Serviço não encontrado');
     res.render('editarServico', { servico });
 });
 
-// salvar edição
+
 app.post('/servicos/:id/editar', async (req, res) => {
     const servico = await Servico.findByPk(req.params.id);
     if (!servico) return res.status(404).send('Serviço não encontrado');
@@ -210,7 +212,7 @@ app.post('/servicos/:id/editar', async (req, res) => {
     res.redirect('/servicos');
 });
 
-// excluir
+
 app.post('/servicos/excluir/:id', async (req, res) => {
     const servico = await Servico.findByPk(req.params.id);
     if (!servico) return res.status(404).send('Serviço não encontrado');
@@ -228,7 +230,7 @@ app.get('/homeEvento', (req, res) => {
     res.render('homeEvento');
 });
 
-// listar serviços
+
 app.get('/eventos', async (req, res) => {
     const eventos = await Evento.findAll({
         order: [['id', 'ASC']],
@@ -237,31 +239,31 @@ app.get('/eventos', async (req, res) => {
     res.render('listarEventos', { eventos });
 });
 
-// formulário novo serviço
+
 app.get('/eventos/novo', (req, res) => res.render('cadastrarEvento'));
 
-// criar serviço
+
 app.post('/eventos', async (req, res) => {
     const { nome, descricao, requisitos, faixa_etaria, data} = req.body;
     await Evento.create({ nome, descricao, requisitos, faixa_etaria, data});
     res.redirect('/eventos');
 });
 
-// ver detalhes
+
 app.get('/eventos/ver/:id', async (req, res) => {
     const evento = await Evento.findByPk(req.params.id, { raw: true });
     if (!evento) return res.status(404).send('Evento não encontrado');
     res.render('detalharEvento', { evento });
 });
 
-// editar form
+
 app.get('/eventos/:id/editar', async (req, res) => {
     const evento = await Evento.findByPk(req.params.id, { raw: true });
     if (!evento) return res.status(404).send('Evento não encontrado');
     res.render('editarEvento', { evento });
 });
 
-// salvar edição
+
 app.post('/eventos/:id/editar', async (req, res) => {
     const evento = await Evento.findByPk(req.params.id);
     if (!evento) return res.status(404).send('Evento não encontrado');
@@ -276,7 +278,7 @@ app.post('/eventos/:id/editar', async (req, res) => {
     res.redirect('/eventos');
 });
 
-// excluir
+
 app.post('/eventos/excluir/:id', async (req, res) => {
     const evento = await Evento.findByPk(req.params.id);
     if (!evento) return res.status(404).send('Evento não encontrado');
@@ -284,6 +286,138 @@ app.post('/eventos/excluir/:id', async (req, res) => {
     await evento.destroy();
     res.redirect('/eventos');
 });
+
+/* ----------------------
+   Rotas Aulas
+   ---------------------- */
+
+
+app.get('/homeAula', (req, res) => {
+    res.render('homeAula');
+});
+
+
+app.get('/aulas', async (req, res) => {
+    const aulas = await Aula.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarAulas', { aulas });
+});
+
+
+app.get('/aulas/novo', (req, res) => res.render('cadastrarAula'));
+
+
+app.post('/aulas', async (req, res) => {
+    const { nome, descricao, preco, faixa_etaria, horas_semanais} = req.body;
+    await Aula.create({ nome, descricao, preco, faixa_etaria, horas_semanais});
+    res.redirect('/aulas');
+});
+
+
+app.get('/aulas/ver/:id', async (req, res) => {
+    const aula = await Aula.findByPk(req.params.id, { raw: true });
+    if (!aula) return res.status(404).send('Aula não encontrada');
+    res.render('detalharAula', { aula });
+});
+
+
+app.get('/aulas/:id/editar', async (req, res) => {
+    const aula = await Aula.findByPk(req.params.id, { raw: true });
+    if (!aula) return res.status(404).send('Aula não encontrada');
+    res.render('editarAula', { aula });
+});
+
+
+app.post('/aulas/:id/editar', async (req, res) => {
+    const aula = await Aula.findByPk(req.params.id);
+    if (!aula) return res.status(404).send('Aula não encontrada');
+
+    aula.nome = req.body.nome;
+    aula.descricao = req.body.descricao;
+    aula.preco = req.body.preco;
+    aula.faixa_etaria = req.body.faixa_etaria;
+    aula.horas_semanais = req.body.horas_semanais;
+
+    await aula.save();
+    res.redirect('/aulas');
+});
+
+
+app.post('/aulas/excluir/:id', async (req, res) => {
+    const aula = await Aula.findByPk(req.params.id);
+    if (!aula) return res.status(404).send('Aula não encontrada');
+
+    await aula.destroy();
+    res.redirect('/aulas');
+});
+
+/* ----------------------
+   Rotas Planos
+   ---------------------- */
+
+
+app.get('/homePlano', (req, res) => {
+    res.render('homePlano');
+});
+
+
+app.get('/planos', async (req, res) => {
+    const planos = await Plano.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarPlanos', { planos });
+});
+
+
+app.get('/planos/novo', (req, res) => res.render('cadastrarPlano'));
+
+
+app.post('/planos', async (req, res) => {
+    const { nome, beneficios, preco, horas_limite} = req.body;
+    await Plano.create({ nome, beneficios, preco, horas_limite});
+    res.redirect('/planos');
+});
+
+
+app.get('/planos/ver/:id', async (req, res) => {
+    const plano = await Plano.findByPk(req.params.id, { raw: true });
+    if (!plano) return res.status(404).send('Plano não encontrado');
+    res.render('detalharPlano', { plano });
+});
+
+
+app.get('/planos/:id/editar', async (req, res) => {
+    const plano = await Plano.findByPk(req.params.id, { raw: true });
+    if (!plano) return res.status(404).send('Plano não encontrado');
+    res.render('editarPlano', { plano });
+});
+
+
+app.post('/planos/:id/editar', async (req, res) => {
+    const plano = await Plano.findByPk(req.params.id);
+    if (!plano) return res.status(404).send('Plano não encontrado');
+
+    plano.nome = req.body.nome;
+    plano.beneficios = req.body.beneficios;
+    plano.preco = req.body.preco;
+    plano.horas_limite = req.body.horas_limite;
+
+    await plano.save();
+    res.redirect('/planos');
+});
+
+
+app.post('/planos/excluir/:id', async (req, res) => {
+    const plano = await Plano.findByPk(req.params.id);
+    if (!plano) return res.status(404).send('Plano não encontrado');
+
+    await plano.destroy();
+    res.redirect('/planos');
+});
+
 
 /* ----------------------
    Inicializar DB e servidor

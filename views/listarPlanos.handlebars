@@ -9,28 +9,28 @@
 
 <body>
     <header>
-        <h1>Aulas</h1>
+        <h1>Planos</h1>
     </header>
     <main>
         <div class="card2">
         <ul class="lista-retro">
-            {{#each aulas}}
+            {{#each planos}}
                 <li class="item-retro">
                 <div class="item-info">
-                <a class="link-retro" href="/aulas/ver/{{id}}">
+                <a class="link-retro" href="/planos/ver/{{id}}">
                 {{nome}}
                 </a>
                 </div>
                 <div class="item-buttons">
-                <a class="btn" href="/aulas/{{id}}/editar">Editar</a>
-                <form action="/aulas/excluir/{{id}}" method="POST">
+                <a class="btn" href="/planos/{{id}}/editar">Editar</a>
+                <form action="/planos/excluir/{{id}}" method="POST">
                 <button class="btn" type="submit" onclick="return confirm('confirma exclusão?')">Excluir</button>
                 </form>
                 </div>
                 </li>
             {{/each}}
         </ul>
-        <a class="btn" href="/homeAula">Voltar</a>
+        <a class="btn" href="/homePlano">Voltar</a>
         </div>
     </main>
 

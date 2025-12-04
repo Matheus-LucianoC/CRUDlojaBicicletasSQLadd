@@ -8,18 +8,20 @@
 </head>
 <body>
     <header>
-    <h2>Cadastrar Serviço</h2>
+    <h2>Cadastrar Aula</h2>
     </header>
     <main>
     <div class="card">
-    <form action="/servicos" method="POST">
-    <input type="text" name="nome" placeholder="Nome do serviço" required>
-    <input type="text" name="descricao" placeholder="Descrição do serviço" required>
-    <input type="number" name="preco" placeholder="preço do serviço" required>
+    <form action="/aulas" method="POST">
+    <input type="text" name="nome" placeholder="Nome da aula" required>
+    <input type="text" name="descricao" placeholder="Descrição da aula" required>
+    <input type="number" name="preco" placeholder="preço da aula" required>
+    <input type="number" name="faixa_etaria" placeholder="Faixa etaria" required>
+    <input type="number" name="horas_semanais" placeholder="Horas semanais" required>
     <button type="submit">Salvar</button>
     </form>
 
-    <a class="btn" href="/homeServicos">Voltar</a>
+    <a class="btn" href="/homeAula">Voltar</a>
     </div>
     </main>
 </body>
