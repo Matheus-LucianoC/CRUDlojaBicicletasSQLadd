@@ -13,7 +13,7 @@ const Produto = sequelize.define('Produto', {
   },
   descricao: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   preco: {
     type: DataTypes.STRING,

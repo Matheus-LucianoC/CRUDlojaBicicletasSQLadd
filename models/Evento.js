@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
-const Servico = sequelize.define('Servico', {
+const Evento = sequelize.define('evento', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -13,15 +13,23 @@ const Servico = sequelize.define('Servico', {
   },
   descricao: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
-  preco: {
+  requisitos: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
+  faixa_etaria: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  data: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  }
 }, {
-  tableName: 'servicos',
+  tableName: 'eventos',
   timestamps: false,
 });
 
-module.exports = Servico;
+module.exports = Evento;

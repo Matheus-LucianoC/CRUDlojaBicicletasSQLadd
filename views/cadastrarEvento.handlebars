@@ -8,18 +8,20 @@
 </head>
 <body>
     <header>
-    <h2>Cadastrar Serviço</h2>
+    <h2>Cadastrar Evento</h2>
     </header>
-    <main>
+    <main> 
     <div class="card">
-    <form action="/servicos" method="POST">
-    <input type="text" name="nome" placeholder="Nome do serviço" required>
-    <input type="text" name="descricao" placeholder="Descrição do serviço" required>
-    <input type="number" name="preco" placeholder="preço do serviço" required>
+    <form action="/eventos" method="POST">
+    <input type="text" name="nome" placeholder="Nome do evento" required>
+    <input type="text" name="descricao" placeholder="Descrição do evento" required>
+    <input type="text" name="requisitos" placeholder="Requisitos do evento" required>
+    <input type="number" name="faixa_etaria" placeholder="Faixa etária do evento" required>
+    <input type="date" name="data" placeholder="data do evento" required>
     <button type="submit">Salvar</button>
     </form>
 
-    <a class="btn" href="/homeServicos">Voltar</a>
+    <a class="btn" href="/homeEvento">Voltar</a>
     </div>
     </main>
 </body>

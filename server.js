@@ -7,6 +7,7 @@ const sequelize = require('./database'); // nosso arquivo
 const Pessoa = require('./models/pessoa');
 const Produto = require('./models/Produto');
 const Servico = require('./models/Servico');
+const Evento = require('./models/Evento');
 
 const app = express();
 const port = 3000;
@@ -111,7 +112,7 @@ app.get('/bicicletas/nova', (req, res) => res.render('cadastrarBike'));
 
 // criar bicicleta
 app.post('/bicicletas', async (req, res) => {
-    const { nome, preco, cor, descricao } = req.body;
+    const { nome, descricao, preco, cor,  } = req.body;
     await Produto.create({ nome, preco, cor, descricao });
     res.redirect('/bicicletas');
 });
@@ -136,9 +137,9 @@ app.post('/bicicletas/:id/editar', async (req, res) => {
     if (!produto) return res.status(404).send('Bicicleta não encontrada');
 
     produto.nome = req.body.nome;
+    produto.descricao = req.body.descricao;
     produto.preco = req.body.preco;
     produto.cor = req.body.cor;
-    produto.descricao = req.body.descricao;
 
     await produto.save();
     res.redirect('/bicicletas');
@@ -218,6 +219,71 @@ app.post('/servicos/excluir/:id', async (req, res) => {
     res.redirect('/servicos');
 });
 
+/* ----------------------
+   Rotas Eventos
+   ---------------------- */
+
+
+app.get('/homeEvento', (req, res) => {
+    res.render('homeEvento');
+});
+
+// listar serviços
+app.get('/eventos', async (req, res) => {
+    const eventos = await Evento.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarEventos', { eventos });
+});
+
+// formulário novo serviço
+app.get('/eventos/novo', (req, res) => res.render('cadastrarEvento'));
+
+// criar serviço
+app.post('/eventos', async (req, res) => {
+    const { nome, descricao, requisitos, faixa_etaria, data} = req.body;
+    await Evento.create({ nome, descricao, requisitos, faixa_etaria, data});
+    res.redirect('/eventos');
+});
+
+// ver detalhes
+app.get('/eventos/ver/:id', async (req, res) => {
+    const evento = await Evento.findByPk(req.params.id, { raw: true });
+    if (!evento) return res.status(404).send('Evento não encontrado');
+    res.render('detalharEvento', { evento });
+});
+
+// editar form
+app.get('/eventos/:id/editar', async (req, res) => {
+    const evento = await Evento.findByPk(req.params.id, { raw: true });
+    if (!evento) return res.status(404).send('Evento não encontrado');
+    res.render('editarEvento', { evento });
+});
+
+// salvar edição
+app.post('/eventos/:id/editar', async (req, res) => {
+    const evento = await Evento.findByPk(req.params.id);
+    if (!evento) return res.status(404).send('Evento não encontrado');
+
+    evento.nome = req.body.nome;
+    evento.descricao = req.body.descricao;
+    evento.requisitos = req.body.requisitos;
+    evento.faixa_etaria = req.body.faixa_etaria;
+    evento.data = req.body.data;
+
+    await evento.save();
+    res.redirect('/eventos');
+});
+
+// excluir
+app.post('/eventos/excluir/:id', async (req, res) => {
+    const evento = await Evento.findByPk(req.params.id);
+    if (!evento) return res.status(404).send('Evento não encontrado');
+
+    await evento.destroy();
+    res.redirect('/eventos');
+});
 
 /* ----------------------
    Inicializar DB e servidor
