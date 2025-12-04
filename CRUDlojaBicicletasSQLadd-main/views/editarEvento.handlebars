@@ -1,0 +1,32 @@
+v<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+    <h2>Editar Evento</h2>
+    </header>
+    <main>
+    <div class="card"> 
+    <form action="/eventos/{{evento.id}}/editar" method="post">
+        <h3> nome </h3>
+        <input type="text" name="nome" value="{{evento.nome}}" required>
+        <h3> descrição </h3>
+        <input type="text" name="descricao" value="{{evento.descricao}}" required>
+        <h3> requisitos </h3>
+        <input type="text" name="requisitos" value="{{evento.requisitos}}" required>
+        <h3> faixa etaira </h3>
+        <input type="number" name="faixa_etaria" value="{{evento.faixa_etaria}}" required>
+        <h3> data </h3>
+        <input type="date" name="data" value="{{evento.data}}" required>
+        <button type="submit">Salvar</button>
+    </form>
+    <a class="btn" href="/eventos">Voltar</a>
+    </div>
+    </main>
+</body>
+</html>
