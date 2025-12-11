@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+    <h2>Editar Tutor</h2>
+    </header>
+    <main>
+    <div class="card"> 
+    <form action="/tutor/{{tutor.id}}/editar" method="post">
+        <h3> nome </h3>
+        <input type="text" name="nome" value="{{tutor.nome}}" required>
+        <h3> diciplina </h3>
+        <input type="text" name="diciplina" value="{{tutor.diciplina}}" required>
+        <h3> turmas </h3>
+        <input type="text" name="turmas" value="{{tutor.turmas}}" required>
+        <button type="submit">Salvar</button>
+    </form>
+    <a class="btn" href="/tutor">Voltar</a>
+    </div>
+    </main>
+</body>
+</html>

@@ -10,6 +10,7 @@ const Servico = require('./models/Servico');
 const Evento = require('./models/Evento');
 const Aula = require('./models/Aula');
 const Plano = require('./models/Plano');
+const Tutor = require('./models/Tutor');
 
 const app = express();
 const port = 3000;
@@ -419,13 +420,68 @@ app.post('/planos/excluir/:id', async (req, res) => {
 });
 
 
+
+/* ----------------------
+   Rotas Tutor
+   ---------------------- */
+
+app.get('/homeTutor', (req, res) => {
+    res.render('homeTutor');
+});
+
+app.get('/tutor', async (req, res) => {
+    const tutor = await Tutor.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarTutor', { tutor });
+});
+
+app.get('/tutor/novo', (req, res) => res.render('cadastrarTutor'));
+
+app.post('/tutor', async (req, res) => {
+    const { nome, diciplina, turmas } = req.body;
+    await Tutor.create({ nome, diciplina, turmas });
+    res.redirect('/tutor');
+});
+
+app.get('/tutor/ver/:id', async (req, res) => {
+    const tutor = await Tutor.findByPk(req.params.id, { raw: true });
+    if (!tutor) return res.status(404).send('Tutor não encontrado');
+    res.render('detalharTutor', { tutor });
+});
+
+app.get('/tutor/:id/editar', async (req, res) => {
+    const tutor = await Tutor.findByPk(req.params.id, { raw: true });
+    if (!tutor) return res.status(404).send('Tutor não encontrado');
+    res.render('editarTutor', { tutor });
+});
+
+app.post('/tutor/:id/editar', async (req, res) => {
+    const tutor = await Tutor.findByPk(req.params.id);
+    if (!tutor) return res.status(404).send('Tutor não encontrado');
+    tutor.id = req.body.id;
+    tutor.nome = req.body.nome;
+    tutor.diciplina = req.body.diciplina;
+    tutor.turmas = req.body.turmas;
+    await tutor.save();
+    res.redirect('/tutor');
+});
+
+app.post('/tutor/excluir/:id', async (req, res) => {
+    const tutor = await Tutor.findByPk(req.params.id);
+    if (!tutor) return res.status(404).send('Tutor não encontrado');
+    await tutor.destroy();
+    res.redirect('/tutor');
+});
+
 /* ----------------------
    Inicializar DB e servidor
    ---------------------- */
 
 (async () => {
   try {
-    await sequelize.authenticate();
+    await sequelize.authenticate({force:true});
     // sincroniza modelos com o DB (cria tabelas se não existirem)
     await sequelize.sync(); 
     console.log('Banco sincronizado');
