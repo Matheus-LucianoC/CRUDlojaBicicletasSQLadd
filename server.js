@@ -474,6 +474,58 @@ app.post('/tutor/excluir/:id', async (req, res) => {
     await tutor.destroy();
     res.redirect('/tutor');
 });
+/* ----------------------
+   Rotas Turma
+   ---------------------- */
+app.get('/homeTurma', (req, res) => {
+    res.render('homeTurma');
+});
+
+app.get('/turma', async (req, res) => {
+    const turma = await Turma.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarTurma', { turma });
+});
+
+app.get('/turma/novo', (req, res) => res.render('cadastrarTurma'));
+
+app.post('/turma', async (req, res) => {
+    const { alunos, tutor, aula } = req.body;
+    await Turma.create({ alunos, tutor, aula });
+    res.redirect('/turma');
+});
+
+app.get('/turma/ver/:id', async (req, res) => {
+    const turma = await Turma.findByPk(req.params.id, { raw: true });
+    if (!turma) return res.status(404).send('Turma não encontrado');
+    res.render('detalharTurma', { Turma });
+});
+
+app.get('/turma/:id/editar', async (req, res) => {
+    const turma = await Turma.findByPk(req.params.id, { raw: true });
+    if (!turma) return res.status(404).send('Turma não encontrado');
+    res.render('editarTurma', { turma });
+});
+
+app.post('/turma/:id/editar', async (req, res) => {
+    const turma = await turma.findByPk(req.params.id);
+    if (!turma) return res.status(404).send('turma não encontrado');
+    turma.id = req.body.id;
+    turma.alunos = req.body.alunos;
+    turma.tutor = req.body.tutor;
+    turma.aula = req.body.aula;
+    await turma.save();
+    res.redirect('/turma');
+});
+
+app.post('/turma/excluir/:id'), async (req, res) => {
+    const turma = await Turma.findByPk(req.params.id);
+    if (!turma) return res.status(404).send('turma não encontrado');
+    await turma.destroy();
+    res.redirect('/turma');
+}
 
 /* ----------------------
    Inicializar DB e servidor

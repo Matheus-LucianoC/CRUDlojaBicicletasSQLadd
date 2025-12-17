@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Bicicletas</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Turma</h1>
+    </header>
+    <main>
+        <div class="card2">
+        <ul class="lista-retro">
+            {{#each turma}}
+                <li class="item-retro">
+                <div class="item-info">
+                <a class="link-retro" href="/turma/ver/{{id}}">
+                {{nome}}
+                </a>
+                </div>
+                <div class="item-buttons">
+                <a class="btn" href="/turma/{{id}}/editar">Editar</a>
+                <form action="/turma/excluir/{{id}}" method="POST">
+                <button class="btn" type="submit" onclick="return confirm('confirma exclusão?')">Excluir</button>
+                </form>
+                </div>
+                </li>
+            {{/each}}
+        </ul>
+        <a class="btn" href="/homeTurma">Voltar</a>
+        </div>
+    </main>
+
+</body>
+</html>
