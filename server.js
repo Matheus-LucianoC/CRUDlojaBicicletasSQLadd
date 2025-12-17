@@ -11,6 +11,7 @@ const Evento = require('./models/Evento');
 const Aula = require('./models/Aula');
 const Plano = require('./models/Plano');
 const Tutor = require('./models/Tutor');
+const Turma = require('./models/Turma');
 
 const app = express();
 const port = 3000;
@@ -510,7 +511,7 @@ app.get('/turma/:id/editar', async (req, res) => {
 });
 
 app.post('/turma/:id/editar', async (req, res) => {
-    const turma = await turma.findByPk(req.params.id);
+    const turma = await Turma.findByPk(req.params.id);
     if (!turma) return res.status(404).send('turma não encontrado');
     turma.id = req.body.id;
     turma.alunos = req.body.alunos;
@@ -520,12 +521,12 @@ app.post('/turma/:id/editar', async (req, res) => {
     res.redirect('/turma');
 });
 
-app.post('/turma/excluir/:id'), async (req, res) => {
+app.post('/turma/excluir/:id', async (req, res) => {
     const turma = await Turma.findByPk(req.params.id);
     if (!turma) return res.status(404).send('turma não encontrado');
     await turma.destroy();
     res.redirect('/turma');
-}
+});
 
 /* ----------------------
    Inicializar DB e servidor
