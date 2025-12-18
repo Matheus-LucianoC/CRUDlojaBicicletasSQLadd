@@ -15,10 +15,6 @@ const Tutor = sequelize.define('Tutor', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  turmas: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
 }, {
   tableName: 'tutores',
   timestamps: false,

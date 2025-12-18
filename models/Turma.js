@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
+const { NOMEM } = require('sqlite3');
 
 const Tutor = sequelize.define('Turma', {
   id: {
@@ -7,17 +8,9 @@ const Tutor = sequelize.define('Turma', {
     primaryKey: true,
     autoIncrement: true,
   },
-  alunos: {
+  nome: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  tutor: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
-  aula: {
-    type: DataTypes.STRING,
-    allowNull: true,
   },
 }, {
   tableName: 'Turmas',

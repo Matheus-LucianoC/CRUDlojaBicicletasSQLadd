@@ -13,13 +13,7 @@
     <main>
     <div class="card"> 
     <form action="/turma/{{turma.id}}/editar" method="post">
-        <h3> alunos </h3>
-        <input type="text" name="alunos" value="{{turma.alunos}}" required>
-        <h3> tutor </h3>
-        <input type="text" name="tutor" value="{{turma.tutor}}" required>
-        <h3> aula </h3>
-        <input type="text" name="aula" value="{{turma.aula}}" required>
-        <button type="submit">Salvar</button>
+    <input type="text" name="nome" value="{{turma.nome}}" required>
     </form>
     <a class="btn" href="/turma">Voltar</a>
     </div>
