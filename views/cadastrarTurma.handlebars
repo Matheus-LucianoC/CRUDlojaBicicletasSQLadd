@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Turma</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <h2>Cadastrar Turma</h2>
+    </header>
+    <main>
+        <div class="card">
+            <form action="/turma" method="POST">
+
+                <label for="nome">Nome da Turma:</label>
+                <input type="text" id="nome" name="nome" placeholder="Nome da turma" required>
+
+                <label for="tutorId">Tutor:</label>
+                <select name="tutorId" id="tutorId" required>
+                    <option value="">Selecione um tutor</option>
+                    {{#each tutores}}
+                        <option value="{{id}}">{{nome}}</option>
+                    {{/each}}
+                </select>
+
+                <label for="aulaId">Aula:</label>
+                <select name="aulaId" id="aulaId" required>
+                    <option value="">Selecione uma aula</option>
+                    {{#each aulas}}
+                        <option value="{{id}}">{{nome}}</option>
+                    {{/each}}
+                </select>
+
+                <label>Alunos:</label>
+                <div>
+                    {{#each pessoas}}
+                        <label style="display: block;">
+                            <input type="checkbox" name="pessoaIds" value="{{id}}">
+                            {{pessoa}}
+                        </label>
+                    {{/each}}
+                </div>
+
+                <button type="submit">Salvar</button>
+            </form>
+
+            <a class="btn" href="/homeTurma">Voltar</a>
+        </div>
+    </main>
+</body>
+</html>

@@ -11,6 +11,7 @@ const Evento = require('./models/Evento');
 const Aula = require('./models/Aula');
 const Plano = require('./models/Plano');
 const Tutor = require('./models/Tutor');
+const Turma = require('./models/Turma');
 
 const app = express();
 const port = 3000;
@@ -18,13 +19,36 @@ const port = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('views', path.join(__dirname, 'views'));
-app.engine('handlebars', exphbs.engine({ defaultLayout: false }));
+app.engine('handlebars', exphbs.engine({
+    defaultLayout: false,
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+}));
+
+app.engine('handlebars', exphbs.engine({
+    defaultLayout: false,
+    helpers: {
+        ifCond: (v1, v2, options) => {
+            return v1 == v2 ? options.fn(this) : options.inverse(this);
+        },
+        contains: (id, pessoas) => {
+            return pessoas.some(p => p.id === id);
+        }
+    },
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+}));
+
 app.set('view engine', 'handlebars');
+
+require('./models');
 
 /* ----------------------
    Rotas PESSOAS (exemplos)
@@ -440,8 +464,8 @@ app.get('/tutor', async (req, res) => {
 app.get('/tutor/novo', (req, res) => res.render('cadastrarTutor'));
 
 app.post('/tutor', async (req, res) => {
-    const { nome, diciplina, turmas } = req.body;
-    await Tutor.create({ nome, diciplina, turmas });
+    const { nome, diciplina } = req.body;
+    await Tutor.create({ nome, diciplina });
     res.redirect('/tutor');
 });
 
@@ -463,7 +487,6 @@ app.post('/tutor/:id/editar', async (req, res) => {
     tutor.id = req.body.id;
     tutor.nome = req.body.nome;
     tutor.diciplina = req.body.diciplina;
-    tutor.turmas = req.body.turmas;
     await tutor.save();
     res.redirect('/tutor');
 });
@@ -474,6 +497,156 @@ app.post('/tutor/excluir/:id', async (req, res) => {
     await tutor.destroy();
     res.redirect('/tutor');
 });
+/* ----------------------
+   Rotas Turma
+   ---------------------- */
+app.get('/homeTurma', (req, res) => {
+    res.render('homeTurma');
+});
+
+app.get('/turma', async (req, res) => {
+    const turma = await Turma.findAll({
+        order: [['id', 'ASC']],
+        raw: true
+    });
+    res.render('listarTurma', { turma });
+});
+
+app.post('/turma', async (req, res) => {
+    try {
+        const { nome, tutorId, aulaId, pessoaIds } = req.body;
+
+        const turma = await Turma.create({ nome, tutorId, aulaId });
+
+        if (pessoaIds && pessoaIds.length > 0) {
+            await turma.addPessoas(pessoaIds);
+        }
+
+        res.redirect('/turma');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao cadastrar turma');
+    }
+});
+
+app.get('/turma/novo', async (req, res) => {
+    try {
+        const tutores = await Tutor.findAll({ order: [['nome', 'ASC']], raw: true });
+        const aulas = await Aula.findAll({ order: [['nome', 'ASC']], raw: true });
+        const pessoas = await Pessoa.findAll({ order: [['pessoa', 'ASC']], raw: true });
+
+        res.render('cadastrarTurma', { tutores, aulas, pessoas });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao carregar dados para cadastrar turma');
+    }
+});
+
+app.post('/turma', async (req, res) => {
+    try {
+        const { nome, tutorId, aulaId, pessoaIds } = req.body;
+
+        const turma = await Turma.create({ nome, tutorId, aulaId });
+
+        if (pessoaIds && pessoaIds.length > 0) {
+            const alunos = Array.isArray(pessoaIds) ? pessoaIds : [pessoaIds];
+            await turma.addPessoas(alunos);
+        }
+
+        res.redirect('/turma');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao cadastrar turma');
+    }
+});
+app.get('/turma/ver/:id', async (req, res) => {
+    const turma = await Turma.findByPk(req.params.id, { include:
+        [
+            {model: Tutor, as: 'tutor'},
+            {model: Aula, as: 'aula'},
+            {model: Pessoa, as: 'pessoas'}
+        ] 
+    });
+    if (!turma) return res.status(404).send('Turma não encontrado');
+    res.render('detalharTurma', { turma });
+});
+
+app.post('/turma/:id/editar', async (req, res) => {
+    try {
+        const { nome, tutorId, aulaId, pessoaIds } = req.body;
+
+        const turma = await Turma.findByPk(req.params.id);
+
+        if (!turma) {
+            return res.status(404).send('Turma não encontrada');
+        }
+
+        turma.nome = nome;
+        turma.tutorId = tutorId;
+        turma.aulaId = aulaId;
+        await turma.save();
+
+        if (pessoaIds) {
+            const alunos = Array.isArray(pessoaIds) ? pessoaIds : [pessoaIds];
+            await turma.setPessoas(alunos);
+        } else {
+            await turma.setPessoas([]);
+        }
+
+        res.redirect('/turma');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao editar turma');
+    }
+});   
+
+app.get('/turma/:id/editar', async (req, res) => {
+    try {
+        const turma = await Turma.findByPk(req.params.id, {
+            include: [
+                { model: Tutor, as: 'tutor' },
+                { model: Aula, as: 'aula' },
+                { model: Pessoa, as: 'pessoas' }
+            ]
+        });
+
+        if (!turma) {
+            return res.status(404).send('Turma não encontrada');
+        }
+
+        const tutores = await Tutor.findAll({
+            order: [['nome', 'ASC']],
+            raw: true
+        });
+
+        const aulas = await Aula.findAll({
+            order: [['nome', 'ASC']],
+            raw: true
+        });
+
+        const pessoas = await Pessoa.findAll({
+            order: [['pessoa', 'ASC']],
+            raw: true
+        });
+
+        res.render('editarTurma', {
+            turma,
+            tutores,
+            aulas,
+            pessoas
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao carregar edição da turma');
+    }
+});
+
+app.post('/turma/excluir/:id', async (req, res) => {
+    const turma = await Turma.findByPk(req.params.id);
+    if (!turma) return res.status(404).send('turma não encontrado');
+    await turma.destroy();
+    res.redirect('/turma');
+});
 
 /* ----------------------
    Inicializar DB e servidor
@@ -481,7 +654,7 @@ app.post('/tutor/excluir/:id', async (req, res) => {
 
 (async () => {
   try {
-    await sequelize.authenticate({force:true});
+    await sequelize.authenticate();
     // sincroniza modelos com o DB (cria tabelas se não existirem)
     await sequelize.sync(); 
     console.log('Banco sincronizado');

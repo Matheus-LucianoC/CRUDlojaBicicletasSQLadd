@@ -1,7 +1,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
+const { NOMEM } = require('sqlite3');
 
-const Tutor = sequelize.define('Tutor', {
+const Tutor = sequelize.define('Turma', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,12 +12,8 @@ const Tutor = sequelize.define('Tutor', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  diciplina: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
 }, {
-  tableName: 'tutores',
+  tableName: 'Turmas',
   timestamps: false,
 });
 

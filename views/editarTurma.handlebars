@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header>
+    <h2>Editar Turma</h2>
+</header>
+
+<form action="/turma/{{turma.id}}/editar" method="POST">
+    <main>
+    <div class="card">
+    <div>
+        <label>Nome da Turma</label><br>
+        <input type="text" name="nome" value="{{turma.nome}}" required>
+    </div>
+
+    <hr>
+
+    <div>
+        <label>Tutor</label><br>
+        <select name="tutorId" class="select" required>
+            <option value="">Selecione um tutor</option>
+            {{#each tutores}}
+                <option value="{{id}}" {{#ifCond id ../turma.tutorId}}selected{{/ifCond}}>
+                    {{nome}}
+                </option>
+            {{/each}}
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Aula</label><br>
+        <select name="aulaId" required>
+            <option value="">Selecione uma aula</option>
+            {{#each aulas}}
+                <option value="{{id}}" {{#ifCond id ../turma.aulaId}}selected{{/ifCond}}>
+                    {{nome}}
+                </option>
+            {{/each}}
+        </select>
+    </div>
+
+    <hr>
+
+    <div>
+        <label>Alunos</label><br>
+
+        {{#each pessoas}}
+            <label style="">
+                <input 
+                    type="checkbox"
+                    name="pessoaIds"
+                    value="{{id}}"
+                    {{#if (contains id ../turma.pessoas)}}checked{{/if}}
+                >
+                {{pessoa}}
+            </label>
+        {{/each}}
+    </div>
+
+    <hr>
+
+    
+    <button type="submit">Salvar Alterações</button>
+
+</form>
+
+    <a class="btn" href="/turma">Voltar</a>
+    </div>
+    </main>
+    </div>
+</body>
+</html>
