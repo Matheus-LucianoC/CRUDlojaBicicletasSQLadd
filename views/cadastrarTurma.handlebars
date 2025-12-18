@@ -3,39 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Cadastrar Turma</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <header>
-    <h2>Cadastrar turma</h2>
+        <h2>Cadastrar Turma</h2>
     </header>
     <main>
         <div class="card">
             <form action="/turma" method="POST">
-                <label for="nome">Nome da turma:</label>
+
+                <label for="nome">Nome da Turma:</label>
                 <input type="text" id="nome" name="nome" placeholder="Nome da turma" required>
 
                 <label for="tutorId">Tutor:</label>
                 <select name="tutorId" id="tutorId" required>
+                    <option value="">Selecione um tutor</option>
                     {{#each tutores}}
                         <option value="{{id}}">{{nome}}</option>
                     {{/each}}
                 </select>
 
                 <label for="aulaId">Aula:</label>
-                <select name="aulaId" id="aulaId" required> 
+                <select name="aulaId" id="aulaId" required>
+                    <option value="">Selecione uma aula</option>
                     {{#each aulas}}
                         <option value="{{id}}">{{nome}}</option>
                     {{/each}}
                 </select>
 
-                <label for="pessoaIds">Pessoa:</label>
-                <select name="pessoaIds[]" id="pessoaIds" multiple required>
+                <label>Alunos:</label>
+                <div>
                     {{#each pessoas}}
-                        <option value="{{id}}">{{pessoa}}</option>
+                        <label style="display: block;">
+                            <input type="checkbox" name="pessoaIds" value="{{id}}">
+                            {{pessoa}}
+                        </label>
                     {{/each}}
-                </select>
+                </div>
 
                 <button type="submit">Salvar</button>
             </form>

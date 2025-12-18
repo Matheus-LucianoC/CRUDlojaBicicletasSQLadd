@@ -29,6 +29,23 @@ app.engine('handlebars', exphbs.engine({
         allowProtoMethodsByDefault: true
     }
 }));
+
+app.engine('handlebars', exphbs.engine({
+    defaultLayout: false,
+    helpers: {
+        ifCond: (v1, v2, options) => {
+            return v1 == v2 ? options.fn(this) : options.inverse(this);
+        },
+        contains: (id, pessoas) => {
+            return pessoas.some(p => p.id === id);
+        }
+    },
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    }
+}));
+
 app.set('view engine', 'handlebars');
 
 require('./models');
@@ -554,20 +571,75 @@ app.get('/turma/ver/:id', async (req, res) => {
     res.render('detalharTurma', { turma });
 });
 
-app.get('/turma/:id/editar', async (req, res) => {
-    const turma = await Turma.findByPk(req.params.id, { raw: true });
-    if (!turma) return res.status(404).send('Turma não encontrado');
-    res.render('editarTurma', { turma });
-});
-
 app.post('/turma/:id/editar', async (req, res) => {
-    const turma = await Turma.findByPk(req.params.id);
-    if (!turma) return res.status(404).send('turma não encontrado');
-    turma.id = req.body.id;
-    turma.nome = req.body.nome;
-    await turma.save();
-    res.redirect('/turma');
-});        
+    try {
+        const { nome, tutorId, aulaId, pessoaIds } = req.body;
+
+        const turma = await Turma.findByPk(req.params.id);
+
+        if (!turma) {
+            return res.status(404).send('Turma não encontrada');
+        }
+
+        turma.nome = nome;
+        turma.tutorId = tutorId;
+        turma.aulaId = aulaId;
+        await turma.save();
+
+        if (pessoaIds) {
+            const alunos = Array.isArray(pessoaIds) ? pessoaIds : [pessoaIds];
+            await turma.setPessoas(alunos);
+        } else {
+            await turma.setPessoas([]);
+        }
+
+        res.redirect('/turma');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao editar turma');
+    }
+});   
+
+app.get('/turma/:id/editar', async (req, res) => {
+    try {
+        const turma = await Turma.findByPk(req.params.id, {
+            include: [
+                { model: Tutor, as: 'tutor' },
+                { model: Aula, as: 'aula' },
+                { model: Pessoa, as: 'pessoas' }
+            ]
+        });
+
+        if (!turma) {
+            return res.status(404).send('Turma não encontrada');
+        }
+
+        const tutores = await Tutor.findAll({
+            order: [['nome', 'ASC']],
+            raw: true
+        });
+
+        const aulas = await Aula.findAll({
+            order: [['nome', 'ASC']],
+            raw: true
+        });
+
+        const pessoas = await Pessoa.findAll({
+            order: [['pessoa', 'ASC']],
+            raw: true
+        });
+
+        res.render('editarTurma', {
+            turma,
+            tutores,
+            aulas,
+            pessoas
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao carregar edição da turma');
+    }
+});
 
 app.post('/turma/excluir/:id', async (req, res) => {
     const turma = await Turma.findByPk(req.params.id);

@@ -150,3 +150,15 @@ button:active {
     justify-content: space-between;
 }
 
+select {
+    width: 100%;
+    margin-top: 15px;
+    padding: 3px;
+    border: 3px solid #e6d5b8;
+    background: #b6a792;
+    font-family: inherit;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #b6a792;
+    border-radius: 1.5px;
+}
